@@ -43,7 +43,6 @@
       overflow-x: hidden;
     }
 
-    /* Background pattern */
     body::before {
       content: '';
       position: fixed;
@@ -56,10 +55,7 @@
       z-index: -1;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    a { color: inherit; text-decoration: none; }
 
     .container {
       max-width: 1100px;
@@ -67,17 +63,13 @@
       padding: 0 1.5rem;
     }
 
-    /* ========== NAV ========== */
     nav {
       position: fixed;
-      top: 0;
-      right: 0;
-      left: 0;
+      top: 0; right: 0; left: 0;
       z-index: 100;
       background: rgba(11, 18, 32, 0.85);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-      transition: all 0.3s;
     }
 
     nav .container {
@@ -97,8 +89,7 @@
     }
 
     .logo span {
-      width: 10px;
-      height: 10px;
+      width: 10px; height: 10px;
       background: var(--accent);
       border-radius: 50%;
       display: inline-block;
@@ -117,9 +108,7 @@
       font-weight: 500;
     }
 
-    .nav-links a:hover {
-      color: var(--primary-light);
-    }
+    .nav-links a:hover { color: var(--primary-light); }
 
     .nav-toggle {
       display: none;
@@ -130,13 +119,11 @@
       cursor: pointer;
     }
 
-    /* ========== HERO ========== */
     .hero {
       min-height: 100vh;
       display: flex;
       align-items: center;
       padding-top: 70px;
-      position: relative;
     }
 
     .hero-content {
@@ -178,7 +165,6 @@
       font-size: 1.15rem;
       color: var(--text-muted);
       margin-bottom: 1.5rem;
-      font-weight: 400;
     }
 
     .hero-desc {
@@ -195,9 +181,7 @@
       flex-wrap: wrap;
     }
 
-    .stat {
-      text-align: center;
-    }
+    .stat { text-align: center; }
 
     .stat-num {
       font-size: 1.75rem;
@@ -277,17 +261,13 @@
     .avatar-card::before {
       content: '';
       position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
+      top: -50%; right: -50%;
+      width: 200%; height: 200%;
       background: conic-gradient(from 0deg, transparent, rgba(20, 184, 166, 0.15), transparent 30%);
       animation: spin 12s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .avatar-inner {
       position: relative;
@@ -304,11 +284,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 3rem;
-      font-weight: 800;
-      color: white;
       margin: 0 auto 1.25rem;
       box-shadow: 0 10px 30px rgba(15, 118, 110, 0.4);
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .avatar-name {
@@ -334,22 +320,10 @@
       z-index: 2;
     }
 
-    .float-1 {
-      top: 20px;
-      left: -30px;
-      color: var(--success);
-    }
+    .float-1 { top: 20px; left: -30px; color: var(--success); }
+    .float-2 { bottom: 40px; right: -40px; color: var(--accent); }
 
-    .float-2 {
-      bottom: 40px;
-      right: -40px;
-      color: var(--accent);
-    }
-
-    /* ========== SECTIONS ========== */
-    section {
-      padding: 5rem 0;
-    }
+    section { padding: 5rem 0; }
 
     .section-header {
       text-align: center;
@@ -362,7 +336,6 @@
       font-size: 0.9rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
-      letter-spacing: 0.5px;
     }
 
     .section-title {
@@ -370,7 +343,6 @@
       font-weight: 700;
     }
 
-    /* ========== ABOUT ========== */
     .about-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -403,7 +375,6 @@
       font-size: 0.95rem;
     }
 
-    /* ========== EXPERIENCE ========== */
     .timeline {
       position: relative;
       padding-right: 2rem;
@@ -412,9 +383,7 @@
     .timeline::before {
       content: '';
       position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
+      right: 0; top: 0; bottom: 0;
       width: 2px;
       background: linear-gradient(to bottom, var(--primary), var(--accent), transparent);
     }
@@ -425,16 +394,12 @@
       padding-right: 2rem;
     }
 
-    .timeline-item:last-child {
-      padding-bottom: 0;
-    }
+    .timeline-item:last-child { padding-bottom: 0; }
 
     .timeline-dot {
       position: absolute;
-      right: -7px;
-      top: 8px;
-      width: 16px;
-      height: 16px;
+      right: -7px; top: 8px;
+      width: 16px; height: 16px;
       border-radius: 50%;
       background: var(--primary);
       border: 3px solid var(--bg);
@@ -462,16 +427,8 @@
       align-items: center;
     }
 
-    .timeline-role {
-      font-size: 1.15rem;
-      font-weight: 700;
-    }
-
-    .timeline-company {
-      color: var(--primary-light);
-      font-weight: 500;
-      font-size: 0.95rem;
-    }
+    .timeline-role { font-size: 1.15rem; font-weight: 700; }
+    .timeline-company { color: var(--primary-light); font-weight: 500; font-size: 0.95rem; }
 
     .timeline-date {
       background: rgba(15, 118, 110, 0.15);
@@ -482,10 +439,7 @@
       font-weight: 500;
     }
 
-    .timeline-list {
-      list-style: none;
-      margin-top: 1rem;
-    }
+    .timeline-list { list-style: none; margin-top: 1rem; }
 
     .timeline-list li {
       position: relative;
@@ -502,7 +456,6 @@
       color: var(--primary-light);
     }
 
-    /* ========== PROJECTS ========== */
     .projects-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -524,9 +477,7 @@
     .project-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
+      top: 0; right: 0; left: 0;
       height: 3px;
       background: linear-gradient(90deg, var(--primary), var(--accent));
       opacity: 0;
@@ -539,13 +490,10 @@
       box-shadow: 0 15px 40px rgba(0,0,0,0.3);
     }
 
-    .project-card:hover::before {
-      opacity: 1;
-    }
+    .project-card:hover::before { opacity: 1; }
 
     .project-icon {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       border-radius: 12px;
       background: rgba(15, 118, 110, 0.15);
       display: flex;
@@ -555,10 +503,7 @@
       margin-bottom: 1rem;
     }
 
-    .project-card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.75rem;
-    }
+    .project-card h3 { font-size: 1.1rem; margin-bottom: 0.75rem; }
 
     .project-card p {
       color: var(--text-muted);
@@ -589,11 +534,8 @@
       gap: 0.3rem;
     }
 
-    .project-link:hover {
-      text-decoration: underline;
-    }
+    .project-link:hover { text-decoration: underline; }
 
-    /* ========== SKILLS ========== */
     .skills-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -637,7 +579,6 @@
       border-color: var(--primary-light);
     }
 
-    /* ========== HONORS ========== */
     .honors-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -660,10 +601,7 @@
       transform: translateY(-3px);
     }
 
-    .honor-icon {
-      font-size: 1.75rem;
-      flex-shrink: 0;
-    }
+    .honor-icon { font-size: 1.75rem; flex-shrink: 0; }
 
     .honor-card h4 {
       font-size: 0.95rem;
@@ -676,7 +614,6 @@
       color: var(--text-muted);
     }
 
-    /* ========== ARTICLES ========== */
     .articles-list {
       display: flex;
       flex-direction: column;
@@ -700,8 +637,7 @@
     }
 
     .article-num {
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       border-radius: 10px;
       background: rgba(15, 118, 110, 0.15);
       color: var(--primary-light);
@@ -718,7 +654,6 @@
       color: var(--text-muted);
     }
 
-    /* ========== CONTACT ========== */
     .contact-box {
       background: linear-gradient(135deg, rgba(15, 118, 110, 0.15), rgba(245, 158, 11, 0.08));
       border: 1px solid rgba(20, 184, 166, 0.25);
@@ -747,7 +682,6 @@
       flex-wrap: wrap;
     }
 
-    /* ========== FOOTER ========== */
     footer {
       padding: 2rem 0;
       border-top: 1px solid var(--border);
@@ -756,75 +690,36 @@
       font-size: 0.85rem;
     }
 
-    /* ========== RESPONSIVE ========== */
     @media (max-width: 900px) {
-      .hero-content {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-
-      .hero-desc {
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .hero-stats {
-        justify-content: center;
-      }
-
-      .hero-btns {
-        justify-content: center;
-      }
-
-      .hero-visual {
-        order: -1;
-      }
-
-      .float-1, .float-2 {
-        display: none;
-      }
-
-      .about-grid,
-      .skills-grid {
-        grid-template-columns: 1fr;
-      }
+      .hero-content { grid-template-columns: 1fr; text-align: center; }
+      .hero-desc { margin-left: auto; margin-right: auto; }
+      .hero-stats { justify-content: center; }
+      .hero-btns { justify-content: center; }
+      .hero-visual { order: -1; }
+      .float-1, .float-2 { display: none; }
+      .about-grid, .skills-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 700px) {
       .nav-links {
         display: none;
         position: absolute;
-        top: 70px;
-        right: 0;
-        left: 0;
+        top: 70px; right: 0; left: 0;
         background: var(--bg-card);
         flex-direction: column;
         padding: 1.5rem;
         gap: 1rem;
         border-bottom: 1px solid var(--border);
       }
-
-      .nav-links.open {
-        display: flex;
-      }
-
-      .nav-toggle {
-        display: block;
-      }
-
-      .timeline {
-        padding-right: 1.25rem;
-      }
-
-      .contact-box {
-        padding: 2rem 1.25rem;
-      }
+      .nav-links.open { display: flex; }
+      .nav-toggle { display: block; }
+      .timeline { padding-right: 1.25rem; }
+      .contact-box { padding: 2rem 1.25rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
   <nav>
     <div class="container">
       <a href="#" class="logo"><span></span> حامد خانه‌پز</a>
@@ -840,36 +735,19 @@
     </div>
   </nav>
 
-  <!-- HERO -->
   <section class="hero">
     <div class="container">
       <div class="hero-content">
         <div>
-          <div class="hero-badge">
-            <span>●</span> در دسترس برای همکاری و مشاوره
-          </div>
+          <div class="hero-badge"><span>●</span> در دسترس برای همکاری و مشاوره</div>
           <h1>سلام، من <span>حامد خانه‌پز</span> هستم</h1>
           <p class="hero-title">مدیر فنی آزمایشگاه · مدیر کنترل کیفیت · متخصص تحول دیجیتال آزمایشگاه</p>
-          <p class="hero-desc">
-            بیش از ۱۳ سال تجربه در صنعت فولاد؛ متخصص استقرار ISO/IEC 17025، طراحی سامانه‌های LIMS اختصاصی و بهبود مستمر فرآیندهای کنترل کیفیت.
-          </p>
+          <p class="hero-desc">بیش از ۱۳ سال تجربه در صنعت فولاد؛ متخصص استقرار ISO/IEC 17025، طراحی سامانه‌های LIMS اختصاصی و بهبود مستمر فرآیندهای کنترل کیفیت.</p>
           <div class="hero-stats">
-            <div class="stat">
-              <span class="stat-num">۱۳+</span>
-              <span class="stat-label">سال تجربه</span>
-            </div>
-            <div class="stat">
-              <span class="stat-num">۲۰۰۰+</span>
-              <span class="stat-label">آزمون سالانه</span>
-            </div>
-            <div class="stat">
-              <span class="stat-num">۶۰٪</span>
-              <span class="stat-label">کاهش زمان پردازش</span>
-            </div>
-            <div class="stat">
-              <span class="stat-num">۱۰۰+</span>
-              <span class="stat-label">سند استاندارد</span>
-            </div>
+            <div class="stat"><span class="stat-num">۱۳+</span><span class="stat-label">سال تجربه</span></div>
+            <div class="stat"><span class="stat-num">۲۰۰۰+</span><span class="stat-label">آزمون سالانه</span></div>
+            <div class="stat"><span class="stat-num">۶۰٪</span><span class="stat-label">کاهش زمان پردازش</span></div>
+            <div class="stat"><span class="stat-num">۱۰۰+</span><span class="stat-label">سند استاندارد</span></div>
           </div>
           <div class="hero-btns">
             <a href="#projects" class="btn btn-primary">مشاهده پروژه‌ها</a>
@@ -881,7 +759,9 @@
             <div class="float-badge float-1">✓ ISO 17025</div>
             <div class="float-badge float-2">★ رتبه برتر ۱۴۰۴</div>
             <div class="avatar-inner">
-              <div class="avatar-circle">ح‌خ</div>
+              <div class="avatar-circle">
+                <img src="https://avatars.githubusercontent.com/u/76646881?v=4" alt="حامد خانه‌پز" />
+              </div>
               <div class="avatar-name">حامد خانه‌پز</div>
               <div class="avatar-role">مدیر فنی آزمایشگاه</div>
             </div>
@@ -891,7 +771,6 @@
     </div>
   </section>
 
-  <!-- ABOUT -->
   <section id="about">
     <div class="container">
       <div class="section-header">
@@ -901,21 +780,16 @@
       <div class="about-grid">
         <div class="about-card">
           <h3>🎯 تخصص اصلی</h3>
-          <p>
-            مدیر کنترل کیفیت و آزمایشگاه با تمرکز بر تحول دیجیتال آزمایشگاه‌ها، استقرار و توسعه سیستم مدیریت کیفیت ISO/IEC 17025، طراحی سامانه‌های تصمیم‌یار کیفیت (LIMS) و بهبود مستمر فرآیندهای کنترل کیفیت در صنعت فولاد.
-          </p>
+          <p>مدیر کنترل کیفیت و آزمایشگاه با تمرکز بر تحول دیجیتال آزمایشگاه‌ها، استقرار و توسعه سیستم مدیریت کیفیت ISO/IEC 17025، طراحی سامانه‌های تصمیم‌یار کیفیت (LIMS) و بهبود مستمر فرآیندهای کنترل کیفیت در صنعت فولاد.</p>
         </div>
         <div class="about-card">
           <h3>🏭 حوزه فعالیت</h3>
-          <p>
-            صنعت فولاد و زنجیره معدن، آزمایشگاه‌های همکار، تدوین استانداردهای ملی، آموزش تخصصی پرسنل آزمایشگاه و تولید، و مشاوره استقرار استانداردهای کیفیت.
-          </p>
+          <p>صنعت فولاد و زنجیره معدن، آزمایشگاه‌های همکار، تدوین استانداردهای ملی، آموزش تخصصی پرسنل آزمایشگاه و تولید، و مشاوره استقرار استانداردهای کیفیت.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- EXPERIENCE -->
   <section id="experience">
     <div class="container">
       <div class="section-header">
@@ -973,7 +847,6 @@
     </div>
   </section>
 
-  <!-- PROJECTS -->
   <section id="projects">
     <div class="container">
       <div class="section-header">
@@ -1016,7 +889,6 @@
     </div>
   </section>
 
-  <!-- SKILLS -->
   <section id="skills">
     <div class="container">
       <div class="section-header">
@@ -1058,7 +930,6 @@
     </div>
   </section>
 
-  <!-- HONORS -->
   <section id="honors">
     <div class="container">
       <div class="section-header">
@@ -1119,7 +990,6 @@
     </div>
   </section>
 
-  <!-- ARTICLES -->
   <section id="articles">
     <div class="container">
       <div class="section-header">
@@ -1143,24 +1013,22 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
   <section id="contact">
     <div class="container">
       <div class="contact-box">
         <h2>آماده همکاری هستم</h2>
-        <p>
-          برای مشاوره استقرار ISO/IEC 17025، طراحی LIMS، آموزش تخصصی یا همکاری در پروژه‌های تحول دیجیتال آزمایشگاه با من در ارتباط باشید.
-        </p>
+        <p>برای مشاوره استقرار ISO/IEC 17025، طراحی LIMS، آموزش تخصصی یا همکاری در پروژه‌های تحول دیجیتال آزمایشگاه با من در ارتباط باشید.</p>
         <div class="contact-links">
-          <a href="https://khanepaz.github.io/resume/" target="_blank" rel="noopener" class="btn btn-primary">مشاهده رزومه کامل</a>
-          <a href="https://iso17025-docs.ir" target="_blank" rel="noopener" class="btn btn-outline">سامانه مستندات ۱۷۰۲۵</a>
-          <a href="https://khanepaz.github.io/Iso17025/" target="_blank" rel="noopener" class="btn btn-outline">مشاوره ISO 17025</a>
+          <a href="https://www.linkedin.com/in/hamed-khanepaz-7876478a/" target="_blank" rel="noopener" class="btn btn-primary">LinkedIn</a>
+          <a href="mailto:hamed.khanepaz@gmail.com" class="btn btn-outline">ایمیل</a>
+          <a href="https://wa.me/989193898001" target="_blank" rel="noopener" class="btn btn-outline">واتس‌اپ</a>
+          <a href="https://khanepaz.github.io/resume/" target="_blank" rel="noopener" class="btn btn-outline">رزومه کامل</a>
+          <a href="https://iso17025-docs.ir" target="_blank" rel="noopener" class="btn btn-outline">سامانه ۱۷۰۲۵</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <div class="container">
       <p>© ۱۴۰۵ حامد خانه‌پز — طراحی‌شده برای نمایش حرفه‌ای سوابق و دستاوردها</p>
@@ -1168,19 +1036,10 @@
   </footer>
 
   <script>
-    // Mobile nav toggle
     const toggle = document.getElementById('navToggle');
     const links = document.getElementById('navLinks');
-    toggle.addEventListener('click', () => {
-      links.classList.toggle('open');
-    });
-
-    // Close menu on link click
-    links.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => links.classList.remove('open'));
-    });
-
-    // Smooth active link highlight on scroll
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
     const sections = document.querySelectorAll('section[id]');
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY + 100;
@@ -1190,11 +1049,8 @@
         const id = sec.getAttribute('id');
         const link = document.querySelector(`.nav-links a[href="#${id}"]`);
         if (link) {
-          if (scrollY >= top && scrollY < top + height) {
-            link.style.color = 'var(--primary-light)';
-          } else {
-            link.style.color = '';
-          }
+          if (scrollY >= top && scrollY < top + height) link.style.color = 'var(--primary-light)';
+          else link.style.color = '';
         }
       });
     });
