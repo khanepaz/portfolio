@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# پنل مدیریت ایندکس نشود
+Disallow: /admin/
+
+Sitemap: https://hamedkhanepaz.ir/sitemap.xml
