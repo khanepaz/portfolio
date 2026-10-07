@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پنل مدیریت | حامد خانه‌پز</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+<body>
+  <div id="loginScreen" class="admin-wrap">
+    <div class="login-box">
+      <h1>ورود به پنل مدیریت</h1>
+      <p>با Personal Access Token گیت‌هاب وارد شوید. فقط مالک ریپازیتوری دسترسی دارد.</p>
+      <form id="loginForm">
+        <label for="tokenInput">GitHub PAT</label>
+        <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" required />
+        <p class="hint">
+          توکن را از
+          <a href="https://github.com/settings/tokens/new?scopes=repo&description=hamedkhanepaz-cms" target="_blank" rel="noopener">اینجا</a>
+          با دسترسی <strong>repo</strong> بسازید. توکن فقط در مرورگر شما (localStorage) ذخیره می‌شود.
+        </p>
+        <button type="submit" class="btn btn-primary" style="width:100%">ورود</button>
+        <p id="loginError" style="color:var(--danger);margin-top:.75rem;font-size:.85rem"></p>
+      </form>
+      <p style="margin-top:1.25rem;font-size:.85rem"><a href="../index.html">→ بازگشت به سایت</a></p>
+    </div>
+  </div>
+
+  <div id="appScreen" class="admin-wrap" style="display:none">
+    <div class="admin-header">
+      <div>
+        <h1>پنل مدیریت محتوا</h1>
+        <p class="admin-user">وارد شده: <span id="adminUser">—</span></p>
+      </div>
+      <div style="display:flex;gap:.5rem">
+        <a href="../index.html" class="btn btn-ghost" target="_blank">مشاهده سایت</a>
+        <button class="btn btn-ghost" id="btnLogout">خروج</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-col="posts">📰 اخبار</button>
+      <button class="tab" data-col="articles">📚 مقالات</button>
+      <button class="tab" data-col="iso17025">📋 ISO 17025</button>
+      <button class="tab" data-col="consults">💼 مشاوره</button>
+    </div>
+
+    <div class="toolbar">
+      <span style="color:var(--text-muted);font-size:.9rem">همه تغییرات مستقیم در گیت‌هاب commit می‌شوند</span>
+      <button class="btn btn-primary" id="btnAdd">+ مطلب جدید</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>عنوان</th>
+            <th>تاریخ</th>
+            <th>برچسب‌ها</th>
+            <th>وضعیت</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <h2 id="modalTitle">مطلب جدید</h2>
+      <div class="form-group">
+        <label>عنوان *</label>
+        <input type="text" id="f_title" />
+      </div>
+      <div class="form-group">
+        <label>خلاصه (excerpt)</label>
+        <textarea id="f_excerpt" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>متن کامل (HTML مجاز است)</label>
+        <textarea id="f_content" rows="6"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>آدرس تصویر (URL)</label>
+          <input type="url" id="f_cover" placeholder="https://..." dir="ltr" />
+        </div>
+        <div class="form-group">
+          <label>آدرس ویدیو (URL یا یوتیوب)</label>
+          <input type="url" id="f_video" placeholder="https://..." dir="ltr" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>برچسب‌ها (با ویرگول)</label>
+          <input type="text" id="f_tags" placeholder="LIMS، آزمایشگاه" />
+        </div>
+        <div class="form-group">
+          <label>تاریخ</label>
+          <input type="text" id="f_date" placeholder="1404-01-01" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>منبع (اختیاری)</label>
+        <input type="text" id="f_source" />
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" id="f_published" checked /> منتشر شود</label>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" id="btnCancel">انصراف</button>
+        <button class="btn btn-primary" id="btnSave">ذخیره در گیت‌هاب</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>
