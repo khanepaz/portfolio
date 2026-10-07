@@ -4,6 +4,12 @@
 
   let DATA = null;
 
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+
   function cardHTML(item, section) {
     const icon = { news: '📰', articles: '📚', iso17025: '📋', consult: '💼' }[section] || '📄';
     const cover = item.cover
@@ -22,22 +28,70 @@
       </article>`;
   }
 
-  function esc(s) {
-    const d = document.createElement('div');
-    d.textContent = s == null ? '' : String(s);
-    return d.innerHTML;
+  function initCarousel(trackId) {
+    const track = document.getElementById(trackId);
+    if (!track) return;
+    const section = track.closest('.carousel');
+    if (!section) return;
+    const prev = section.querySelector('[data-dir="prev"]') || section.previousElementSibling?.querySelector('[data-dir="prev"]');
+    const next = section.querySelector('[data-dir="next"]') || section.previousElementSibling?.querySelector('[data-dir="next"]');
+    // buttons are in section-head, sibling of carousel
+    const head = track.closest('.slide-inner')?.querySelector('.section-head');
+    const prevBtn = head?.querySelector('[data-dir="prev"]');
+    const nextBtn = head?.querySelector('[data-dir="next"]');
+    const dotsBox = section.querySelector('.carousel-dots');
+
+    function cardWidth() {
+      const card = track.querySelector('.card');
+      if (!card) return 300;
+      const style = getComputedStyle(track);
+      const gap = parseFloat(style.gap) || 16;
+      return card.offsetWidth + gap;
+    }
+
+    function updateDots() {
+      if (!dotsBox) return;
+      const cards = track.querySelectorAll('.card');
+      const n = cards.length;
+      if (n <= 1) { dotsBox.innerHTML = ''; return; }
+      const idx = Math.round(track.scrollLeft / cardWidth());
+      dotsBox.innerHTML = Array.from({ length: n }, (_, i) =>
+        `<button type="button" class="${i === idx ? 'active' : ''}" data-i="${i}" aria-label="اسلاید ${i + 1}"></button>`
+      ).join('');
+      dotsBox.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          track.scrollTo({ left: Number(btn.dataset.i) * cardWidth(), behavior: 'smooth' });
+        });
+      });
+    }
+
+    function updateBtns() {
+      if (prevBtn) prevBtn.disabled = track.scrollLeft <= 4;
+      if (nextBtn) nextBtn.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+      updateDots();
+    }
+
+    prevBtn?.addEventListener('click', () => {
+      track.scrollBy({ left: -cardWidth(), behavior: 'smooth' });
+    });
+    nextBtn?.addEventListener('click', () => {
+      track.scrollBy({ left: cardWidth(), behavior: 'smooth' });
+    });
+    track.addEventListener('scroll', () => requestAnimationFrame(updateBtns));
+    window.addEventListener('resize', updateBtns);
+    updateBtns();
   }
 
-  function renderSection(key, items, limit) {
-    const box = $(`#grid-${key}`);
-    if (!box) return;
+  function renderSection(key, items) {
+    const track = document.getElementById('track-' + key);
+    if (!track) return;
     const list = (items || []).filter(i => i.published !== false);
-    const show = limit ? list.slice(0, limit) : list;
-    if (!show.length) {
-      box.innerHTML = '<div class="empty">مطلبی منتشر نشده است.</div>';
+    if (!list.length) {
+      track.innerHTML = '<div class="empty">مطلبی منتشر نشده است.</div>';
       return;
     }
-    box.innerHTML = show.map(i => cardHTML(i, key)).join('');
+    track.innerHTML = list.map(i => cardHTML(i, key)).join('');
+    initCarousel('track-' + key);
   }
 
   function setupSearch() {
@@ -45,96 +99,93 @@
     if (!input || !DATA) return;
     input.addEventListener('input', () => {
       const q = input.value.trim().toLowerCase();
+      if (!q) {
+        renderSection('news', DATA.posts);
+        renderSection('articles', DATA.articles);
+        renderSection('iso17025', DATA.iso17025);
+        renderSection('consult', DATA.consults);
+        return;
+      }
       const all = [
         ...DATA.posts.map(i => ({ ...i, _s: 'news' })),
         ...DATA.articles.map(i => ({ ...i, _s: 'articles' })),
         ...DATA.iso17025.map(i => ({ ...i, _s: 'iso17025' })),
         ...DATA.consults.map(i => ({ ...i, _s: 'consult' }))
       ];
-      if (!q) {
-        renderSection('news', DATA.posts, 6);
-        renderSection('articles', DATA.articles, 6);
-        renderSection('iso17025', DATA.iso17025, 6);
-        renderSection('consult', DATA.consults, 6);
-        return;
-      }
       const filtered = all.filter(i =>
         (i.title || '').toLowerCase().includes(q) ||
         (i.excerpt || '').toLowerCase().includes(q) ||
         (i.tags || []).some(t => t.toLowerCase().includes(q))
       );
-      const box = $('#grid-news');
-      if (box) {
-        box.innerHTML = filtered.length
+      const track = $('#track-news');
+      if (track) {
+        track.innerHTML = filtered.length
           ? filtered.map(i => cardHTML(i, i._s)).join('')
           : '<div class="empty">نتیجه‌ای یافت نشد.</div>';
+        initCarousel('track-news');
       }
+      document.getElementById('news')?.scrollIntoView({ behavior: 'smooth' });
     });
   }
 
-  function setupMobileNav() {
+  function setupSideDots() {
+    const slides = $$('.slide[id]');
+    const dots = $$('.side-dots a');
+    if (!slides.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        dots.forEach(d => d.classList.toggle('active', d.getAttribute('href') === '#' + id));
+        $$('.nav-links a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      });
+    }, { threshold: 0.45 });
+
+    slides.forEach(s => observer.observe(s));
+  }
+
+  function setupMobileMenu() {
     const toggle = $('#menuToggle');
-    const sidebar = $('#sidebar');
-    const overlay = $('#sidebarOverlay');
-    if (!toggle) return;
-    const close = () => {
-      sidebar?.classList.remove('open');
-      overlay?.classList.remove('show');
-    };
-    toggle.addEventListener('click', () => {
-      sidebar?.classList.toggle('open');
-      overlay?.classList.toggle('show');
-    });
-    overlay?.addEventListener('click', close);
-    $$('.sidebar-menu a').forEach(a => a.addEventListener('click', close));
+    const menu = $('#mobileMenu');
+    if (!toggle || !menu) return;
+    toggle.addEventListener('click', () => menu.classList.toggle('open'));
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
   }
 
   function fillSiteMeta(site) {
     if (!site) return;
     const brand = $('.brand-name');
     if (brand) brand.textContent = site.title || 'حامد خانه‌پز';
-    const avatars = $$('.site-avatar');
-    avatars.forEach(img => { if (site.avatar) img.src = site.avatar; });
+    $$('.site-avatar').forEach(img => { if (site.avatar) img.src = site.avatar; });
     const tagline = $('.site-tagline');
     if (tagline) tagline.textContent = site.tagline || '';
-    const email = $('.link-email');
-    if (email && site.email) email.href = 'mailto:' + site.email;
-    const li = $('.link-linkedin');
-    if (li && site.linkedin) li.href = site.linkedin;
-    const wa = $('.link-whatsapp');
-    if (wa && site.whatsapp) wa.href = site.whatsapp;
   }
 
   async function init() {
+    setupMobileMenu();
+    setupSideDots();
     try {
       DATA = await GH.loadAll();
       fillSiteMeta(DATA.site);
-      renderSection('news', DATA.posts, 6);
-      renderSection('articles', DATA.articles, 6);
-      renderSection('iso17025', DATA.iso17025, 6);
-      renderSection('consult', DATA.consults, 6);
+      renderSection('news', DATA.posts);
+      renderSection('articles', DATA.articles);
+      renderSection('iso17025', DATA.iso17025);
+      renderSection('consult', DATA.consults);
       setupSearch();
     } catch (e) {
       console.error(e);
-      const main = $('.main');
-      if (main) main.innerHTML = `<div class="empty">خطا در بارگذاری محتوا: ${esc(e.message)}</div>`;
     }
-    setupMobileNav();
   }
 
   async function initPost() {
     const params = new URLSearchParams(location.search);
     const section = params.get('s') || 'news';
     const id = params.get('id');
-    const map = {
-      news: 'posts',
-      articles: 'articles',
-      iso17025: 'iso17025',
-      consult: 'consults'
-    };
+    const map = { news: 'posts', articles: 'articles', iso17025: 'iso17025', consult: 'consults' };
     const key = map[section] || 'posts';
     try {
-      const data = await GH.fetchJSON(SITE_CONFIG.files[key === 'posts' ? 'posts' : key]);
+      const data = await GH.fetchJSON(SITE_CONFIG.files[key]);
       const item = (data || []).find(i => i.id === id);
       const root = $('#postRoot');
       if (!item || !root) {
