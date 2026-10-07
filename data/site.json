@@ -1,0 +1,18 @@
+{
+  "title": "حامد خانه‌پز",
+  "tagline": "مدیر فنی آزمایشگاه · متخصص تحول دیجیتال · مشاور ISO/IEC 17025",
+  "description": "سایت شخصی حامد خانه‌پز — اخبار، مقالات علمی، مشاوره و منابع ISO 17025",
+  "domain": "hamedkhanepaz.ir",
+  "email": "hamed.khanepaz@gmail.com",
+  "linkedin": "https://www.linkedin.com/in/hamed-khanepaz-7876478a/",
+  "whatsapp": "https://wa.me/989193898001",
+  "github": "https://github.com/khanepaz",
+  "avatar": "https://avatars.githubusercontent.com/u/76646881?v=4",
+  "sections": [
+    { "id": "news", "title": "اخبار", "icon": "📰", "path": "#news" },
+    { "id": "articles", "title": "مقالات علمی", "icon": "📚", "path": "#articles" },
+    { "id": "iso17025", "title": "ISO 17025", "icon": "📋", "path": "#iso17025" },
+    { "id": "consult", "title": "مشاوره", "icon": "💼", "path": "#consult" },
+    { "id": "portfolio", "title": "پورتفولیو", "icon": "👤", "path": "portfolio.html" }
+  ]
+}
