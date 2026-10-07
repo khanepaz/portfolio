@@ -7,7 +7,7 @@
   <meta name="description" content="سایت شخصی حامد خانه‌پز — مدیر فنی آزمایشگاه، متخصص تحول دیجیتال و مشاور استقرار ISO/IEC 17025" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
-  <meta name="theme-color" content="#0f766e" />
+  <meta name="theme-color" content="#0d9488" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -22,6 +22,7 @@
         <span class="brand-name">حامد خانه‌پز</span>
       </a>
       <ul class="nav-links">
+        <li><a href="#home">خانه</a></li>
         <li><a href="#news">اخبار</a></li>
         <li><a href="#articles">مقالات</a></li>
         <li><a href="#iso17025">ISO 17025</a></li>
@@ -35,66 +36,111 @@
     </div>
   </nav>
 
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#home">خانه</a>
+    <a href="#news">📰 اخبار</a>
+    <a href="#articles">📚 مقالات</a>
+    <a href="#iso17025">📋 ISO 17025</a>
+    <a href="#consult">💼 مشاوره</a>
+    <a href="portfolio.html">👤 پورتفولیو</a>
+    <a href="admin/">⚙️ مدیریت</a>
+  </div>
 
-  <div class="layout">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-profile">
-        <img class="site-avatar" src="https://avatars.githubusercontent.com/u/76646881?v=4" alt="حامد خانه‌پز" />
-        <h3>حامد خانه‌پز</h3>
-        <p class="site-tagline">مدیر فنی آزمایشگاه · متخصص تحول دیجیتال</p>
-      </div>
-      <ul class="sidebar-menu">
-        <li><a href="#news">📰 اخبار</a></li>
-        <li><a href="#articles">📚 مقالات علمی</a></li>
-        <li><a href="#iso17025">📋 موضوعات ۱۷۰۲۵</a></li>
-        <li><a href="#consult">💼 مشاوره‌ها</a></li>
-        <li><a href="portfolio.html">👤 پورتفولیو</a></li>
-        <li><a href="https://iso17025-docs.ir" target="_blank" rel="noopener">🔗 سامانه مستندات</a></li>
-      </ul>
-      <div class="sidebar-social">
-        <a class="link-linkedin" href="https://www.linkedin.com/in/hamed-khanepaz-7876478a/" target="_blank" rel="noopener" title="LinkedIn">in</a>
-        <a class="link-email" href="mailto:h.khanepaz@gmail.com" title="ایمیل">✉</a>
-        <a class="link-whatsapp" href="https://wa.me/989193898001" target="_blank" rel="noopener" title="واتس‌اپ">wa</a>
-        <a href="https://github.com/khanepaz" target="_blank" rel="noopener" title="GitHub">gh</a>
-      </div>
-    </aside>
+  <nav class="side-dots" aria-label="ناوبری اسلایدها">
+    <a href="#home" class="active" title="خانه"></a>
+    <a href="#news" title="اخبار"></a>
+    <a href="#articles" title="مقالات"></a>
+    <a href="#iso17025" title="ISO 17025"></a>
+    <a href="#consult" title="مشاوره"></a>
+  </nav>
 
-    <main class="main">
-      <div class="hero-banner">
-        <h1>خوش آمدید</h1>
-        <p>اخبار، مقالات علمی، منابع ISO/IEC 17025 و خدمات مشاوره در زمینه کنترل کیفیت و تحول دیجیتال آزمایشگاه.</p>
-      </div>
-
+  <section class="slide slide-hero" id="home">
+    <div class="slide-inner">
+      <img class="hero-avatar site-avatar" src="https://avatars.githubusercontent.com/u/76646881?v=4" alt="حامد خانه‌پز" />
+      <h1>سلام، من <span>حامد خانه‌پز</span> هستم</h1>
+      <p class="tagline site-tagline">مدیر فنی آزمایشگاه · متخصص تحول دیجیتال · مشاور ISO/IEC 17025</p>
       <div class="search-box">
         <span class="icon">🔍</span>
         <input type="search" id="searchInput" placeholder="جستجو در مطالب..." autocomplete="off" />
       </div>
+      <div class="hero-stats">
+        <div class="stat"><b>۱۳+</b><span>سال تجربه</span></div>
+        <div class="stat"><b>۲۰۰۰+</b><span>آزمون سالانه</span></div>
+        <div class="stat"><b>۶۰٪</b><span>کاهش زمان پردازش</span></div>
+        <div class="stat"><b>۱۰۰+</b><span>سند استاندارد</span></div>
+      </div>
+      <div class="hero-actions">
+        <a href="#news" class="btn btn-primary">مشاهده مطالب</a>
+        <a href="portfolio.html" class="btn btn-ghost">پورتفولیو</a>
+      </div>
+    </div>
+    <div class="scroll-hint">اسکرول کنید <span>↓</span></div>
+  </section>
 
-      <section class="section" id="news">
-        <div class="section-head"><h2>📰 اخبار</h2></div>
-        <div class="cards" id="grid-news"></div>
-      </section>
-
-      <section class="section" id="articles">
-        <div class="section-head"><h2>📚 مقالات علمی</h2></div>
-        <div class="cards" id="grid-articles"></div>
-      </section>
-
-      <section class="section" id="iso17025">
-        <div class="section-head">
-          <h2>📋 موضوعات ISO/IEC 17025</h2>
-          <a href="https://iso17025-docs.ir" target="_blank" rel="noopener">سامانه مستندات ←</a>
+  <section class="slide" id="news">
+    <div class="slide-inner">
+      <div class="section-head">
+        <h2><span class="icon-badge">📰</span> اخبار</h2>
+        <div class="head-actions">
+          <button class="carousel-btn" data-dir="prev" aria-label="قبلی">›</button>
+          <button class="carousel-btn" data-dir="next" aria-label="بعدی">‹</button>
         </div>
-        <div class="cards" id="grid-iso17025"></div>
-      </section>
+      </div>
+      <div class="carousel">
+        <div class="carousel-track" id="track-news"></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+  </section>
 
-      <section class="section" id="consult">
-        <div class="section-head"><h2>💼 مشاوره‌ها و خدمات</h2></div>
-        <div class="cards" id="grid-consult"></div>
-      </section>
-    </main>
-  </div>
+  <section class="slide" id="articles">
+    <div class="slide-inner">
+      <div class="section-head">
+        <h2><span class="icon-badge">📚</span> مقالات علمی</h2>
+        <div class="head-actions">
+          <button class="carousel-btn" data-dir="prev" aria-label="قبلی">›</button>
+          <button class="carousel-btn" data-dir="next" aria-label="بعدی">‹</button>
+        </div>
+      </div>
+      <div class="carousel">
+        <div class="carousel-track" id="track-articles"></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="iso17025">
+    <div class="slide-inner">
+      <div class="section-head">
+        <h2><span class="icon-badge">📋</span> موضوعات ISO/IEC 17025</h2>
+        <div class="head-actions">
+          <a class="more" href="https://iso17025-docs.ir" target="_blank" rel="noopener">سامانه مستندات ←</a>
+          <button class="carousel-btn" data-dir="prev" aria-label="قبلی">›</button>
+          <button class="carousel-btn" data-dir="next" aria-label="بعدی">‹</button>
+        </div>
+      </div>
+      <div class="carousel">
+        <div class="carousel-track" id="track-iso17025"></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="consult">
+    <div class="slide-inner">
+      <div class="section-head">
+        <h2><span class="icon-badge">💼</span> مشاوره‌ها و خدمات</h2>
+        <div class="head-actions">
+          <button class="carousel-btn" data-dir="prev" aria-label="قبلی">›</button>
+          <button class="carousel-btn" data-dir="next" aria-label="بعدی">‹</button>
+        </div>
+      </div>
+      <div class="carousel">
+        <div class="carousel-track" id="track-consult"></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </div>
+  </section>
 
   <footer class="site-footer">
     <p>© حامد خانه‌پز — hamedkhanepaz.ir · مدیریت محتوا از طریق GitHub</p>
