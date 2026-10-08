@@ -87,9 +87,6 @@ const GH = {
   }
 };
 
-/**
- * استخراج FILE_ID از هر شکل لینک Google Drive
- */
 function extractDriveFileId(url) {
   if (!url) return null;
   const s = String(url).trim();
@@ -108,26 +105,15 @@ function extractDriveFileId(url) {
   return null;
 }
 
-/**
- * نرمال‌سازی URL تصویر برای <img>
- * لینک‌های Drive به lh3.googleusercontent.com تبدیل می‌شوند (قابل embed).
- * بقیه URLها بدون تغییر.
- */
 function normalizeImageUrl(url) {
   if (url == null) return '';
   const s = String(url).trim();
   if (!s) return '';
-
   const id = extractDriveFileId(s);
-  if (id) {
-    // lh3 مستقیم تصویر برمی‌گرداند و با CORS کار می‌کند
-    return 'https://lh3.googleusercontent.com/d/' + id;
-  }
-
+  if (id) return 'https://lh3.googleusercontent.com/d/' + id;
   return s;
 }
 
-/** جایگزینی src تصاویر Drive داخل HTML + referrerpolicy */
 function normalizeHtmlImages(html) {
   if (!html || typeof html !== 'string') return html || '';
   return html.replace(/<img\b([^>]*)>/gi, function (full, attrs) {
@@ -137,12 +123,150 @@ function normalizeHtmlImages(html) {
     const rawSrc = srcMatch[2];
     const newSrc = normalizeImageUrl(rawSrc);
     let next = attrs.replace(/\bsrc\s*=\s*["'][^"']*["']/i, 'src=' + quote + newSrc + quote);
-    if (!/\breferrerpolicy\s*=/i.test(next)) {
-      next += ' referrerpolicy="no-referrer"';
-    }
-    if (!/\bloading\s*=/i.test(next)) {
-      next += ' loading="lazy"';
-    }
+    if (!/\breferrerpolicy\s*=/i.test(next)) next += ' referrerpolicy="no-referrer"';
+    if (!/\bloading\s*=/i.test(next)) next += ' loading="lazy"';
     return '<img' + next + '>';
   });
+}
+
+function normalizeText(s) {
+  if (s == null) return '';
+  let t = String(s);
+  t = t.replace(/<[^>]+>/g, ' ');
+  t = t.replace(/\u064A/g, '\u06CC').replace(/\u0643/g, '\u06A9');
+  t = t.replace(/[\u200C\u200D\u00A0\u200B\t\r\n]+/g, ' ');
+  t = t.replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 0x06F0));
+  t = t.replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x0660));
+  t = t.replace(/[\/\\|_+\-=.,;:!?()\[\]{}«»"'\u060C\u061B]/g, ' ');
+  t = t.replace(/\s+/g, ' ').trim().toLowerCase();
+  return t;
+}
+
+function stripHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function buildTagVocabulary(collections) {
+  const map = new Map();
+  const lists = Array.isArray(collections) ? collections : Object.values(collections || {});
+  lists.forEach(list => {
+    (list || []).forEach(item => {
+      let tags = item && item.tags;
+      if (!tags) return;
+      if (typeof tags === 'string') tags = tags.split(/[،,]/);
+      if (!Array.isArray(tags)) return;
+      tags.forEach(raw => {
+        const label = String(raw || '').trim();
+        if (!label) return;
+        const key = normalizeText(label);
+        if (!key) return;
+        const prev = map.get(key);
+        if (prev) prev.count += 1;
+        else map.set(key, { label, count: 1 });
+      });
+    });
+  });
+  return [...map.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'fa'));
+}
+
+const SEARCH_WEIGHTS = {
+  title: 5, tags: 4, excerpt: 3, myAnalysis: 2,
+  practicalApplication: 2, content: 1, authors: 1, source: 1
+};
+
+function fieldText(item, field) {
+  if (!item) return '';
+  if (field === 'tags') {
+    const t = item.tags;
+    if (Array.isArray(t)) return t.join(' ');
+    return t ? String(t) : '';
+  }
+  const v = item[field];
+  if (v == null) return '';
+  if (field === 'content' || field === 'myAnalysis' || field === 'practicalApplication') return stripHtml(v);
+  return String(v);
+}
+
+function scoreItemAgainstQuery(item, queryRaw) {
+  const q = normalizeText(queryRaw);
+  if (!q) return 0;
+  const terms = q.split(' ').filter(Boolean);
+  let score = 0;
+  const haystacks = {};
+  for (const [field, w] of Object.entries(SEARCH_WEIGHTS)) {
+    haystacks[field] = normalizeText(fieldText(item, field));
+  }
+  for (const field of ['title', 'tags', 'excerpt']) {
+    if (haystacks[field].includes(q)) score += SEARCH_WEIGHTS[field] * 2;
+  }
+  terms.forEach(term => {
+    for (const [field, w] of Object.entries(SEARCH_WEIGHTS)) {
+      if (haystacks[field].includes(term)) score += w;
+    }
+  });
+  return score;
+}
+
+function scoreItemAgainstTag(item, tagRaw) {
+  const want = normalizeText(tagRaw);
+  if (!want) return 0;
+  let tags = item && item.tags;
+  if (!tags) return 0;
+  if (typeof tags === 'string') tags = tags.split(/[،,]/);
+  if (!Array.isArray(tags)) return 0;
+  for (const t of tags) {
+    if (normalizeText(t) === want) return 100;
+  }
+  if (normalizeText(item.title || '').includes(want)) return 20;
+  return 0;
+}
+
+function flattenPublished(data) {
+  const out = [];
+  const map = [
+    ['news', data.posts, 'خبر'],
+    ['articles', data.articles, 'مقاله علمی'],
+    ['iso17025', data.iso17025, 'ISO 17025'],
+    ['consult', data.consults, 'مشاوره']
+  ];
+  map.forEach(([section, list, typeLabel]) => {
+    (list || []).forEach(item => {
+      if (item && item.published === false) return;
+      out.push({ ...item, _s: section, _typeLabel: typeLabel });
+    });
+  });
+  return out;
+}
+
+function parseDateKey(d) {
+  if (!d) return 0;
+  const s = String(d).replace(/[^0-9]/g, '');
+  return parseInt(s, 10) || 0;
+}
+
+function searchCatalog(data, query) {
+  const all = flattenPublished(data);
+  const scored = all.map(item => ({
+    item,
+    score: scoreItemAgainstQuery(item, query)
+  })).filter(x => x.score > 0);
+  scored.sort((a, b) => b.score - a.score || parseDateKey(b.item.date) - parseDateKey(a.item.date));
+  return scored.map(x => x.item);
+}
+
+function filterByTag(data, tag) {
+  const all = flattenPublished(data);
+  const scored = all.map(item => ({
+    item,
+    score: scoreItemAgainstTag(item, tag)
+  })).filter(x => x.score > 0);
+  scored.sort((a, b) => b.score - a.score || parseDateKey(b.item.date) - parseDateKey(a.item.date));
+  return scored.map(x => x.item);
+}
+
+function findEquivalentTag(vocab, candidate) {
+  const key = normalizeText(candidate);
+  if (!key) return null;
+  return vocab.find(v => normalizeText(v.label) === key) || null;
 }
