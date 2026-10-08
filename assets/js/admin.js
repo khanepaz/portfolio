@@ -64,6 +64,12 @@
     }
   }
 
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+
   function renderTable() {
     const items = state.data[state.current] || [];
     const tbody = $('#tableBody');
@@ -71,9 +77,15 @@
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">مطلبی نیست — یکی اضافه کنید</td></tr>';
       return;
     }
-    tbody.innerHTML = items.map(item => `
+    tbody.innerHTML = items.map(item => {
+      const hasAnalysis = !!(item.myAnalysis && String(item.myAnalysis).trim());
+      return `
       <tr>
-        <td><span class="status-dot ${item.published !== false ? 'on' : 'off'}"></span>${esc(item.title)}</td>
+        <td>
+          <span class="status-dot ${item.published !== false ? 'on' : 'off'}"></span>
+          ${esc(item.title)}
+          ${hasAnalysis ? '<span class="badge-analysis">تحلیل من</span>' : ''}
+        </td>
         <td>${esc(item.date || '—')}</td>
         <td>${(item.tags || []).slice(0, 2).map(t => esc(t)).join('، ') || '—'}</td>
         <td>${item.published !== false ? 'منتشر' : 'پیش‌نویس'}</td>
@@ -81,8 +93,8 @@
           <button class="btn btn-ghost btn-sm" data-edit="${esc(item.id)}">ویرایش</button>
           <button class="btn btn-danger btn-sm" data-del="${esc(item.id)}">حذف</button>
         </td>
-      </tr>
-    `).join('');
+      </tr>`;
+    }).join('');
 
     tbody.querySelectorAll('[data-edit]').forEach(btn => {
       btn.addEventListener('click', () => openEditor(btn.dataset.edit));
@@ -90,12 +102,6 @@
     tbody.querySelectorAll('[data-del]').forEach(btn => {
       btn.addEventListener('click', () => removeItem(btn.dataset.del));
     });
-  }
-
-  function esc(s) {
-    const d = document.createElement('div');
-    d.textContent = s == null ? '' : String(s);
-    return d.innerHTML;
   }
 
   function openEditor(id) {
@@ -111,6 +117,14 @@
     $('#f_date').value = item?.date || new Date().toLocaleDateString('fa-IR');
     $('#f_published').checked = item ? item.published !== false : true;
     $('#f_source').value = item?.source || '';
+    $('#f_sourceUrl').value = item?.sourceUrl || '';
+    $('#f_authors').value = item?.authors || '';
+    $('#f_doi').value = item?.doi || '';
+    $('#f_myAnalysis').value = item?.myAnalysis || '';
+    $('#f_practical').value = item?.practicalApplication || '';
+    if ($('#img_url')) $('#img_url').value = '';
+    if ($('#img_alt')) $('#img_alt').value = '';
+    if ($('#img_caption')) $('#img_caption').value = '';
     $('#modal').classList.add('show');
   }
 
@@ -119,16 +133,51 @@
     state.editId = null;
   }
 
+  function buildFigureHtml(url, alt, caption) {
+    const a = esc(alt || '');
+    const u = esc(url);
+    const cap = (caption || '').trim();
+    let html = `\n<figure class="content-figure">\n  <img src="${u}" alt="${a}" loading="lazy">\n`;
+    if (cap) html += `  <figcaption>${esc(cap)}</figcaption>\n`;
+    html += `</figure>\n`;
+    return html;
+  }
+
+  function insertAtCursor(textarea, text) {
+    if (!textarea) return;
+    const start = textarea.selectionStart || textarea.value.length;
+    const end = textarea.selectionEnd || start;
+    const before = textarea.value.slice(0, start);
+    const after = textarea.value.slice(end);
+    textarea.value = before + text + after;
+    const pos = start + text.length;
+    textarea.focus();
+    textarea.setSelectionRange(pos, pos);
+  }
+
+  function insertImage(targetId) {
+    const url = ($('#img_url')?.value || '').trim();
+    if (!url) return toast('آدرس تصویر را وارد کنید', false);
+    const alt = ($('#img_alt')?.value || '').trim();
+    const caption = ($('#img_caption')?.value || '').trim();
+    const html = buildFigureHtml(url, alt, caption);
+    insertAtCursor($(targetId), html);
+    toast('تصویر درج شد');
+  }
+
   async function saveItem() {
     const title = $('#f_title').value.trim();
     if (!title) return toast('عنوان الزامی است', false);
 
     const tags = $('#f_tags').value.split(/[،,]/).map(t => t.trim()).filter(Boolean);
+    const existing = state.editId
+      ? (state.data[state.current] || []).find(i => i.id === state.editId)
+      : null;
+
     const payload = {
       id: state.editId || uid(state.current.slice(0, 3)),
       title,
-      slug: (state.editId && state.data[state.current].find(i => i.id === state.editId)?.slug) ||
-        title.replace(/\s+/g, '-').slice(0, 60),
+      slug: (existing && existing.slug) || title.replace(/\s+/g, '-').slice(0, 60),
       excerpt: $('#f_excerpt').value.trim(),
       content: $('#f_content').value.trim(),
       cover: $('#f_cover').value.trim(),
@@ -136,10 +185,17 @@
       tags,
       published: $('#f_published').checked,
       date: $('#f_date').value.trim(),
-      updated: new Date().toLocaleDateString('fa-IR')
+      updated: new Date().toLocaleDateString('fa-IR'),
+      source: $('#f_source').value.trim(),
+      sourceUrl: $('#f_sourceUrl').value.trim(),
+      authors: $('#f_authors').value.trim(),
+      doi: $('#f_doi').value.trim(),
+      myAnalysis: $('#f_myAnalysis').value.trim(),
+      practicalApplication: $('#f_practical').value.trim()
     };
-    const src = $('#f_source').value.trim();
-    if (src) payload.source = src;
+
+    if (state.current === 'posts' && existing?.type) payload.type = existing.type;
+    else if (state.current === 'posts') payload.type = 'news';
 
     const list = [...(state.data[state.current] || [])];
     const idx = list.findIndex(i => i.id === payload.id);
@@ -147,7 +203,11 @@
     else list.unshift(payload);
 
     try {
-      await GH.saveCollection(COLLECTIONS[state.current].file, list, `admin: ${state.editId ? 'edit' : 'add'} ${payload.id}`);
+      await GH.saveCollection(
+        COLLECTIONS[state.current].file,
+        list,
+        `admin: ${state.editId ? 'edit' : 'add'} ${payload.id}`
+      );
       state.data[state.current] = list;
       closeModal();
       renderTable();
@@ -182,6 +242,8 @@
   $('#btnAdd')?.addEventListener('click', () => openEditor(null));
   $('#btnSave')?.addEventListener('click', saveItem);
   $('#btnCancel')?.addEventListener('click', closeModal);
+  $('#btnInsertContent')?.addEventListener('click', () => insertImage('#f_content'));
+  $('#btnInsertAnalysis')?.addEventListener('click', () => insertImage('#f_myAnalysis'));
   $('#btnLogout')?.addEventListener('click', () => {
     GH.setToken('');
     state.user = null;
