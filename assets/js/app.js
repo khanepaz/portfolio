@@ -20,13 +20,14 @@
       const raw = img.getAttribute('src') || '';
       const n = normalizeImageUrl(raw);
       if (n && n !== raw) img.setAttribute('src', n);
+      img.setAttribute('referrerpolicy', 'no-referrer');
     });
   }
 
   function cardHTML(item, section) {
     const icon = { news: '📰', articles: '📚', iso17025: '📋', consult: '💼' }[section] || '📄';
     const cover = item.cover
-      ? `<div class="card-cover"><img src="${esc(normalizeImageUrl(item.cover))}" alt=""></div>`
+      ? `<div class="card-cover"><img src="${esc(normalizeImageUrl(item.cover))}" alt="" referrerpolicy="no-referrer" loading="lazy"></div>`
       : `<div class="card-cover">${icon}</div>`;
     const tags = (item.tags || []).slice(0, 3).map(t => `<span class="tag">${esc(t)}</span>`).join('');
     const analysisBadge = hasText(item.myAnalysis)
@@ -225,7 +226,7 @@
       }
       const tags = (item.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join(' ');
       let media = '';
-      if (item.cover) media += `<div class="post-media"><img src="${esc(normalizeImageUrl(item.cover))}" alt="${esc(item.title || '')}"></div>`;
+      if (item.cover) media += `<div class="post-media"><img src="${esc(normalizeImageUrl(item.cover))}" alt="${esc(item.title || '')}" referrerpolicy="no-referrer" loading="lazy"></div>`;
       if (item.video) {
         if (item.video.includes('youtube') || item.video.includes('youtu.be')) {
           const vid = item.video.match(/(?:v=|youtu\.be\/)([\w-]+)/)?.[1];
