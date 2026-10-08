@@ -521,6 +521,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-radius: var(--radius);
   padding: 1.75rem;
   font-size: .95rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 .post-content p { margin-bottom: 1rem; color: var(--text-muted); }
 .post-content ul { padding-right: 1.25rem; margin-bottom: 1rem; color: var(--text-muted); }
@@ -574,7 +576,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-color: var(--border);
 }
 
-/* Editorial: inline figures */
 .content-figure {
   margin: 1.5rem 0;
   text-align: center;
@@ -599,7 +600,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-radius: 12px;
 }
 
-/* My Analysis */
 .my-analysis {
   margin-top: 2rem;
   padding: 1.5rem 1.35rem;
@@ -622,11 +622,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-size: .95rem;
   color: var(--text);
   line-height: 1.85;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 .my-analysis-body p { margin-bottom: .85rem; }
 .my-analysis-body .content-figure { margin: 1.25rem 0; }
 
-/* Practical application */
 .practical-app {
   margin-top: 1.5rem;
   padding: 1.35rem 1.25rem;
@@ -644,9 +645,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-size: .92rem;
   color: var(--text-muted);
   line-height: 1.8;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
-/* Source metadata */
 .post-source {
   display: flex;
   flex-wrap: wrap;
