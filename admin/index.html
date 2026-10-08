@@ -6,7 +6,7 @@
   <title>پنل مدیریت | حامد خانه‌پز</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
-  <meta name="theme-color" content="#0f766e" />
+  <meta name="theme-color" content="#0d9488" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -16,15 +16,9 @@
   <div id="loginScreen" class="admin-wrap">
     <div class="login-box">
       <h1>ورود به پنل مدیریت</h1>
-      <!-- <p>با Personal Access Token گیت‌هاب وارد شوید. فقط مالک ریپازیتوری دسترسی دارد.</p> -->
       <form id="loginForm">
         <label for="tokenInput">Password</label>
         <input type="password" id="tokenInput" placeholder="رمز ورود خود را وارد کنید" autocomplete="off" required />
-        <!-- <p class="hint"> -->
-          <!-- توکن را از -->
-          <!-- <a href="https://github.com/settings/tokens/new?scopes=repo&description=hamedkhanepaz-cms" target="_blank" rel="noopener">اینجا</a> -->
-          <!-- با دسترسی <strong>repo</strong> بسازید. توکن فقط در مرورگر شما (localStorage) ذخیره می‌شود. -->
-        <!-- </p> -->
         <button type="submit" class="btn btn-primary" style="width:100%">ورود</button>
         <p id="loginError" style="color:var(--danger);margin-top:.75rem;font-size:.85rem"></p>
       </form>
@@ -73,8 +67,9 @@
   </div>
 
   <div class="modal-bg" id="modal">
-    <div class="modal">
+    <div class="modal modal-wide">
       <h2 id="modalTitle">مطلب جدید</h2>
+
       <div class="form-group">
         <label>عنوان *</label>
         <input type="text" id="f_title" />
@@ -83,13 +78,37 @@
         <label>خلاصه (excerpt)</label>
         <textarea id="f_excerpt" rows="2"></textarea>
       </div>
+
       <div class="form-group">
-        <label>متن کامل (HTML مجاز است)</label>
-        <textarea id="f_content" rows="6"></textarea>
+        <label>متن کامل (HTML مجاز است — تصاویر را با دکمه زیر درج کنید)</label>
+        <textarea id="f_content" rows="8"></textarea>
       </div>
+
+      <div class="img-insert-box">
+        <p class="img-insert-title">درج تصویر درون‌متنی</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>آدرس تصویر</label>
+            <input type="url" id="img_url" placeholder="https://..." dir="ltr" />
+          </div>
+          <div class="form-group">
+            <label>متن جایگزین (alt)</label>
+            <input type="text" id="img_alt" placeholder="توضیح کوتاه تصویر" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>عنوان تصویر / کپشن (اختیاری)</label>
+          <input type="text" id="img_caption" placeholder="شکل ۱ — توضیح..." />
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button type="button" class="btn btn-ghost btn-sm" id="btnInsertContent">درج در متن کامل</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnInsertAnalysis">درج در تحلیل من</button>
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
-          <label>آدرس تصویر (URL)</label>
+          <label>تصویر شاخص (cover)</label>
           <input type="url" id="f_cover" placeholder="https://..." dir="ltr" />
         </div>
         <div class="form-group">
@@ -107,10 +126,46 @@
           <input type="text" id="f_date" placeholder="1404-01-01" />
         </div>
       </div>
-      <div class="form-group">
-        <label>منبع (اختیاری)</label>
-        <input type="text" id="f_source" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>منبع</label>
+          <input type="text" id="f_source" placeholder="نام نشریه / همایش" />
+        </div>
+        <div class="form-group">
+          <label>لینک منبع</label>
+          <input type="url" id="f_sourceUrl" placeholder="https://..." dir="ltr" />
+        </div>
       </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>نویسندگان</label>
+          <input type="text" id="f_authors" placeholder="نام نویسندگان" />
+        </div>
+        <div class="form-group">
+          <label>DOI</label>
+          <input type="text" id="f_doi" placeholder="10.xxxx/..." dir="ltr" />
+        </div>
+      </div>
+
+      <div class="form-section-divider">
+        <strong>تحلیل من</strong>
+        <span>برداشت فنی و دیدگاه شخصی من درباره این موضوع</span>
+      </div>
+      <div class="form-group">
+        <label>تحلیل من (HTML مجاز — می‌تواند تصویر درون‌متنی داشته باشد)</label>
+        <textarea id="f_myAnalysis" rows="6" placeholder="تحلیل حرفه‌ای شما..."></textarea>
+      </div>
+
+      <div class="form-section-divider">
+        <strong>کاربرد در آزمایشگاه / صنعت</strong>
+        <span>اختیاری</span>
+      </div>
+      <div class="form-group">
+        <label>کاربرد عملی (اختیاری)</label>
+        <textarea id="f_practical" rows="4" placeholder="این موضوع چه کاربردی برای آزمایشگاه صنعتی دارد؟"></textarea>
+      </div>
+
       <div class="form-group">
         <label><input type="checkbox" id="f_published" checked /> منتشر شود</label>
       </div>
