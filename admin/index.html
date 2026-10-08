@@ -117,9 +117,15 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>برچسب‌ها (با ویرگول)</label>
-          <input type="text" id="f_tags" placeholder="LIMS، آزمایشگاه" />
+        <div class="form-group form-group-tags">
+          <label>موضوعات اصلی محتوا</label>
+          <p class="field-hint">موضوعات فنی قابل‌استفاده مجدد — ترجیحاً از تگ‌های موجود انتخاب کنید</p>
+          <div id="tagChips" class="tag-chips"></div>
+          <div class="tag-input-wrap">
+            <input type="text" id="f_tags_input" placeholder="تایپ برای جستجو یا افزودن موضوع..." autocomplete="off" />
+            <div id="tagSuggest" class="tag-suggest" hidden></div>
+          </div>
+          <input type="hidden" id="f_tags" />
         </div>
         <div class="form-group">
           <label>تاریخ</label>
