@@ -3,6 +3,9 @@
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   let DATA = null;
   let searchTimer = null;
+  let searchAllItems = [];
+  let searchShown = 0;
+  const SEARCH_PAGE = 8;
 
   function esc(s) {
     const d = document.createElement('div');
@@ -36,7 +39,9 @@
   function resultCardHTML(item) {
     const section = item._s || 'news';
     const type = item._typeLabel || 'مطلب';
-    return `<article class="search-result-card"><div class="search-result-type">${esc(type)}</div><h3><a href="post.html?s=${section}&id=${encodeURIComponent(item.id)}">${esc(item.title)}</a></h3><p>${esc(item.excerpt || '')}</p><div class="card-meta">${tagHTML(item.tags, 4)}<span class="card-date">${esc(item.date || '')}</span></div></article>`;
+    const ex = (item.excerpt || '').trim();
+    const short = ex.length > 120 ? ex.slice(0, 120) + '…' : ex;
+    return `<a class="search-result-card" href="post.html?s=${section}&id=${encodeURIComponent(item.id)}"><span class="search-result-type">${esc(type)}</span><strong class="search-result-title">${esc(item.title)}</strong>${short ? `<span class="search-result-excerpt">${esc(short)}</span>` : ''}<span class="search-result-meta">${tagHTML(item.tags, 3)}<span class="card-date">${esc(item.date || '')}</span></span></a>`;
   }
   function initCarousel(trackId) {
     const track = document.getElementById(trackId);
@@ -115,17 +120,40 @@
     const el = $('#searchResults');
     if (!el) return;
     el.hidden = false;
-    if (!items.length) {
-      el.innerHTML = `<div class="search-results-head">${esc(label)}</div><div class="empty">نتیجه‌ای یافت نشد.</div>`;
+    searchAllItems = items || [];
+    searchShown = 0;
+    if (!searchAllItems.length) {
+      el.innerHTML = `<div class="search-results-panel"><div class="search-results-head"><span>${esc(label)}</span><button type="button" class="search-clear-btn" id="btnClearSearch">✕ پاک کردن</button></div><div class="empty">نتیجه‌ای یافت نشد.</div></div>`;
+      $('#btnClearSearch')?.addEventListener('click', clearSearch);
       return;
     }
-    el.innerHTML = `<div class="search-results-head"><span>${items.length} نتیجه ${esc(label)}</span><button type="button" class="search-clear-btn" id="btnClearSearch">پاک کردن</button></div><div class="search-results-list">${items.map(resultCardHTML).join('')}</div>`;
+    renderSearchPage(label);
+  }
+  function renderSearchPage(label) {
+    const el = $('#searchResults');
+    if (!el) return;
+    searchShown = Math.min(searchShown + SEARCH_PAGE, searchAllItems.length);
+    const slice = searchAllItems.slice(0, searchShown);
+    const more = searchAllItems.length > searchShown
+      ? `<button type="button" class="search-more-btn" id="btnSearchMore">نمایش موارد بیشتر (${searchAllItems.length - searchShown} باقی‌مانده)</button>`
+      : '';
+    el.innerHTML = `<div class="search-results-panel">
+      <div class="search-results-head">
+        <span class="search-count">${searchAllItems.length} نتیجه ${esc(label || '')} — نمایش ${searchShown}</span>
+        <button type="button" class="search-clear-btn" id="btnClearSearch">✕ پاک کردن</button>
+      </div>
+      <div class="search-results-list">${slice.map(resultCardHTML).join('')}</div>
+      ${more}
+    </div>`;
     bindTagClicks(el);
     $('#btnClearSearch')?.addEventListener('click', clearSearch);
+    $('#btnSearchMore')?.addEventListener('click', () => renderSearchPage(label));
   }
   function hideSearchResults() {
     const el = $('#searchResults');
     if (el) { el.hidden = true; el.innerHTML = ''; }
+    searchAllItems = [];
+    searchShown = 0;
   }
   function setUrlState(params) {
     const u = new URL(location.href);
@@ -141,7 +169,6 @@
     if (!q) { clearSearch(true); return; }
     showSearchResults(searchCatalog(DATA, q), `برای «${q}»`);
     if (!opts || opts.updateUrl !== false) setUrlState({ search: q });
-    document.getElementById('news')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function runTagFilter(tag, opts) {
     if (!DATA || !tag) return;
@@ -149,7 +176,6 @@
     if (input) input.value = tag;
     showSearchResults(filterByTag(DATA, tag), `برای موضوع «${tag}»`);
     if (!opts || opts.updateUrl !== false) setUrlState({ tag: tag });
-    document.getElementById('news')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function clearSearch(skipUrl) {
     const input = $('#searchInput');
