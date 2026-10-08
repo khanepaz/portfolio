@@ -137,7 +137,7 @@
     const a = esc(alt || '');
     const u = esc(normalizeImageUrl(url));
     const cap = (caption || '').trim();
-    let html = `\n<figure class="content-figure">\n  <img src="${u}" alt="${a}" loading="lazy">\n`;
+    let html = `\n<figure class="content-figure">\n  <img src="${u}" alt="${a}" loading="lazy" referrerpolicy="no-referrer">\n`;
     if (cap) html += `  <figcaption>${esc(cap)}</figcaption>\n`;
     html += `</figure>\n`;
     return html;
