@@ -10,17 +10,24 @@
     return d.innerHTML;
   }
 
+  function hasText(v) {
+    return !!(v && String(v).trim());
+  }
+
   function cardHTML(item, section) {
     const icon = { news: '📰', articles: '📚', iso17025: '📋', consult: '💼' }[section] || '📄';
     const cover = item.cover
       ? `<div class="card-cover"><img src="${esc(item.cover)}" alt=""></div>`
       : `<div class="card-cover">${icon}</div>`;
     const tags = (item.tags || []).slice(0, 3).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+    const analysisBadge = hasText(item.myAnalysis)
+      ? `<span class="tag tag-analysis">همراه با تحلیل من</span>`
+      : '';
     return `
       <article class="card" data-id="${esc(item.id)}" data-section="${section}">
         ${cover}
         <div class="card-body">
-          <div class="card-meta">${tags}<span class="card-date">${esc(item.date || '')}</span></div>
+          <div class="card-meta">${tags}${analysisBadge}<span class="card-date">${esc(item.date || '')}</span></div>
           <h3>${esc(item.title)}</h3>
           <p>${esc(item.excerpt || '')}</p>
           <a class="card-link" href="post.html?s=${section}&id=${encodeURIComponent(item.id)}">ادامه مطلب ←</a>
@@ -33,9 +40,6 @@
     if (!track) return;
     const section = track.closest('.carousel');
     if (!section) return;
-    const prev = section.querySelector('[data-dir="prev"]') || section.previousElementSibling?.querySelector('[data-dir="prev"]');
-    const next = section.querySelector('[data-dir="next"]') || section.previousElementSibling?.querySelector('[data-dir="next"]');
-    // buttons are in section-head, sibling of carousel
     const head = track.closest('.slide-inner')?.querySelector('.section-head');
     const prevBtn = head?.querySelector('[data-dir="prev"]');
     const nextBtn = head?.querySelector('[data-dir="next"]');
@@ -162,6 +166,22 @@
     if (tagline) tagline.textContent = site.tagline || '';
   }
 
+  function sourceBlock(item) {
+    const parts = [];
+    if (hasText(item.authors)) parts.push(`<span><strong>نویسندگان:</strong> ${esc(item.authors)}</span>`);
+    if (hasText(item.source)) parts.push(`<span><strong>منبع:</strong> ${esc(item.source)}</span>`);
+    if (hasText(item.date)) parts.push(`<span><strong>تاریخ:</strong> ${esc(item.date)}</span>`);
+    if (hasText(item.doi)) {
+      const doiUrl = item.doi.startsWith('http') ? item.doi : 'https://doi.org/' + item.doi;
+      parts.push(`<span><strong>DOI:</strong> <a href="${esc(doiUrl)}" target="_blank" rel="noopener">${esc(item.doi)}</a></span>`);
+    }
+    if (hasText(item.sourceUrl)) {
+      parts.push(`<span><a class="source-link" href="${esc(item.sourceUrl)}" target="_blank" rel="noopener">مشاهده منبع اصلی ←</a></span>`);
+    }
+    if (!parts.length) return '';
+    return `<div class="post-source">${parts.join('')}</div>`;
+  }
+
   async function init() {
     setupMobileMenu();
     setupSideDots();
@@ -194,7 +214,7 @@
       }
       const tags = (item.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join(' ');
       let media = '';
-      if (item.cover) media += `<div class="post-media"><img src="${esc(item.cover)}" alt=""></div>`;
+      if (item.cover) media += `<div class="post-media"><img src="${esc(item.cover)}" alt="${esc(item.title || '')}"></div>`;
       if (item.video) {
         if (item.video.includes('youtube') || item.video.includes('youtu.be')) {
           const vid = item.video.match(/(?:v=|youtu\.be\/)([\w-]+)/)?.[1];
@@ -203,13 +223,46 @@
           media += `<div class="post-media"><video src="${esc(item.video)}" controls></video></div>`;
         }
       }
+
+      let analysisHtml = '';
+      if (hasText(item.myAnalysis)) {
+        analysisHtml = `
+          <section class="my-analysis">
+            <h2>تحلیل من</h2>
+            <p class="my-analysis-sub">برداشت فنی و دیدگاه شخصی</p>
+            <div class="my-analysis-body">${item.myAnalysis}</div>
+          </section>`;
+      }
+
+      let practicalHtml = '';
+      if (hasText(item.practicalApplication)) {
+        practicalHtml = `
+          <section class="practical-app">
+            <h2>کاربرد در آزمایشگاه / صنعت</h2>
+            <div class="practical-app-body">${item.practicalApplication}</div>
+          </section>`;
+      }
+
+      const excerptBlock = hasText(item.excerpt)
+        ? `<p class="post-excerpt">${esc(item.excerpt)}</p>`
+        : '';
+
       root.innerHTML = `
         <a class="back" href="index.html">→ بازگشت</a>
         <h1>${esc(item.title)}</h1>
-        <div class="meta">${tags}<span>${esc(item.date || '')}</span>${item.source ? `<span>· ${esc(item.source)}</span>` : ''}</div>
+        <div class="meta">${tags}<span>${esc(item.date || '')}</span></div>
+        ${sourceBlock(item)}
         ${media}
-        <div class="post-content">${item.content || ''}</div>`;
+        ${excerptBlock}
+        <div class="post-content">${item.content || ''}</div>
+        ${analysisHtml}
+        ${practicalHtml}`;
       document.title = (item.title || '') + ' | حامد خانه‌پز';
+
+      root.querySelectorAll('.content-figure img, .post-media img').forEach(img => {
+        img.style.cursor = 'zoom-in';
+        img.addEventListener('click', () => window.open(img.src, '_blank'));
+      });
     } catch (e) {
       const root = $('#postRoot');
       if (root) root.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
