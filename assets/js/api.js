@@ -86,3 +86,45 @@ const GH = {
     return this.putFile(path, data, msg || `به‌روزرسانی ${path}`, file.sha);
   }
 };
+
+/**
+ * نرمال‌سازی URL تصویر — تبدیل لینک مشاهده Google Drive به لینک مستقیم
+ * فقط URLهای شناخته‌شده Drive را تغییر می‌دهد؛ بقیه بدون تغییر برمی‌گردند.
+ */
+function normalizeImageUrl(url) {
+  if (url == null) return '';
+  const s = String(url).trim();
+  if (!s) return '';
+
+  // drive.google.com/file/d/FILE_ID/...
+  let m = s.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
+  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+
+  // drive.google.com/open?id=FILE_ID
+  m = s.match(/drive\.google\.com\/open\?[^#]*[?&]?id=([a-zA-Z0-9_-]+)/i);
+  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+
+  // docs.google.com/uc?id=FILE_ID or already partial uc without export=view
+  m = s.match(/(?:drive|docs)\.google\.com\/uc\?(?:.*&)?id=([a-zA-Z0-9_-]+)/i);
+  if (m) {
+    if (/export=view/i.test(s)) return s;
+    return 'https://drive.google.com/uc?export=view&id=' + m[1];
+  }
+
+  // drive.google.com/thumbnail?id=FILE_ID
+  m = s.match(/drive\.google\.com\/thumbnail\?[^#]*[?&]?id=([a-zA-Z0-9_-]+)/i);
+  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+
+  return s;
+}
+
+/** جایگزینی src تصاویر Google Drive داخل HTML */
+function normalizeHtmlImages(html) {
+  if (!html || typeof html !== 'string') return html || '';
+  return html.replace(
+    /(<img\b[^>]*?\bsrc\s*=\s*)(["'])([^"']+)\2/gi,
+    function (_, prefix, quote, src) {
+      return prefix + quote + normalizeImageUrl(src) + quote;
+    }
+  );
+}
