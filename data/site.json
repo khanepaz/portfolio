@@ -7,7 +7,7 @@
   "linkedin": "https://www.linkedin.com/in/hamed-khanepaz-7876478a/",
   "whatsapp": "https://wa.me/989193898001",
   "github": "https://github.com/khanepaz",
-  "avatar": "https://avatars.githubusercontent.com/u/76646881?v=4",
+  "avatar": "https://raw.githubusercontent.com/khanepaz/portfolio/main/assets/images/profile.jpg?v=2",
   "sections": [
     { "id": "news", "title": "اخبار", "icon": "📰", "path": "#news" },
     { "id": "articles", "title": "مقالات علمی", "icon": "📚", "path": "#articles" },
